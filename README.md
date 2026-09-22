@@ -89,6 +89,30 @@ structure holds.
 - Add a supplier/third-party risk assessment questionnaire (expands on
   A.5.19–A.5.22) with a scoring rubric for vendor onboarding
 
+## Keeping the webpage in sync
+
+`index.html` embeds live numbers from the documents (SoA control counts,
+risk register inherent/residual scores). Editing a document doesn't update
+those numbers by hand — [`.github/workflows/sync-stats.yml`](./.github/workflows/sync-stats.yml)
+runs [`scripts/sync-stats.mjs`](./scripts/sync-stats.mjs) automatically on
+every push to `main` that touches `documents/*.md`, recomputes the stats,
+and commits the regenerated `index.html` back to the branch as
+`github-actions[bot]`.
+
+This runs entirely inside GitHub Actions using the repo's built-in
+`GITHUB_TOKEN` — no external service, no bot account, no API key. You have
+full admin control the same way you do over any other workflow: disable,
+edit, or delete it from **Settings → Actions**, or re-run it manually from
+the **Actions** tab (`workflow_dispatch`). It only ever touches `index.html`
+and only runs on pushes to `main`, never on pull requests from forks.
+
+To try it locally: `node scripts/sync-stats.mjs`.
+
+**One-time setup:** this workflow needs to push commits, so under
+**Settings → Actions → General → Workflow permissions**, select
+"Read and write permissions" (repos default to read-only for the
+`GITHUB_TOKEN`).
+
 ## License
 
 MIT — see [LICENSE](./LICENSE).
